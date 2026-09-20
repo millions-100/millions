@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30살 1억 달성 프로젝트 (QLD/USD 레버리지 시뮬레이터)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-indigo-500/20 text-indigo-400 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">QLD & USD 레버리지 전략</span>
+                    <span id="sync-status" class="text-xs text-amber-400 font-medium flex items-center gap-1">🔄 클라우드 연결 중...</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold mt-2 text-white">🚀 30살 1억 달성 프로젝트 시뮬레이터</h1>
+                <p class="text-slate-400 text-sm mt-1">2026년 10월 1일 ~ 2030년 1월 1일 (총 40개월간의 여정)</p>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-right w-full md:w-auto">
+                <div class="text-xs text-slate-400">2030년 1월 1일 최종 목표 자산</div>
+                <div id="header-final-asset" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-0.5">0원</div>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                <div class="text-sm text-slate-400">초기 시작 자산 (현재)</div>
+                <div id="card-seed" class="text-xl font-bold text-white mt-1">8,000,000원</div>
+                <div class="text-xs text-slate-500 mt-2">2026년 10월 1일 기준</div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                <div class="text-sm text-slate-400">총 납입 원금</div>
+                <div id="card-total-principal" class="text-xl font-bold text-indigo-300 mt-1">0원</div>
+                <div class="text-xs text-slate-500 mt-2">시드 + 월 월추가 납입 누적 총액</div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                <div class="text-sm text-slate-400">총 납부 예상 양도세</div>
+                <div id="card-total-tax" class="text-xl font-bold text-rose-400 mt-1">0원</div>
+                <div class="text-xs text-slate-500 mt-2">매년 5월 (기본공제 250만 원 제외 22%)</div>
+            </div>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                <div class="flex justify-between items-center">
+                    <div id="card-achievement-title" class="text-sm text-slate-400">당월 기준 1억 달성률</div>
+                    <div id="card-current-asset-sub" class="text-xs text-emerald-400 font-semibold"></div>
+                </div>
+                <div id="card-achievement-rate" class="text-xl font-bold text-amber-400 mt-1">0%</div>
+                <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                    <div id="achievement-bar" class="bg-amber-400 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+            <h2 class="text-lg font-bold text-white mb-4">📈 자산 성과 시각화 (세후 기준)</h2>
+            <div class="h-72 sm:h-80 w-full">
+                <canvas id="assetChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Table Controls & Bulk Edit Bar -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-lg font-bold text-white">📅 월별 상세 내역 및 수정표 (2026.10 ~ 2030.01)</h2>
+                    <button onclick="toggleAllMemos()" id="toggle-all-btn" class="bg-slate-700 hover:bg-slate-600 text-indigo-300 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 transition flex items-center gap-1">
+                        <span>📝 전체 메모 열기/닫기</span>
+                    </button>
+                </div>
+                
+                <!-- Compact Bulk Edit Controls -->
+                <div class="flex flex-wrap items-center gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-700/60 w-full lg:w-auto">
+                    <span class="text-xs font-semibold text-indigo-400 px-1">일괄 적용:</span>
+                    <input type="text" id="bulk-deposit" placeholder="추가 납입(원)" oninput="formatInputWithComma(this)" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs w-28 text-white focus:outline-none focus:border-indigo-500">
+                    <button onclick="applyBulkDeposit()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1 rounded transition">납입일괄</button>
+                    
+                    <div class="h-4 w-px bg-slate-700 mx-1"></div>
+                    
+                    <input type="number" step="0.1" id="bulk-return" placeholder="수익률(%)" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs w-20 text-white focus:outline-none focus:border-indigo-500">
+                    <button onclick="applyBulkReturn()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1 rounded transition">수익률일괄</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Table -->
+            <div class="overflow-x-auto max-h-[550px] rounded-xl border border-slate-700">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-slate-900 sticky top-0 z-10 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">시기</th>
+                            <th class="p-3">시작 자산 (수정가능)</th>
+                            <th class="p-3">추가 납입금 (원)</th>
+                            <th class="p-3 w-20">월 수익률</th>
+                            <th class="p-3">수익금</th>
+                            <th class="p-3">양도소득세 (수정가능)</th>
+                            <th class="p-3 text-right">월말 최종 자산</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-700/50 text-slate-200">
+                        <!-- JS dynamically injects rows here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-xs text-slate-400 text-right">
+                * 입력한 내용은 클라우드 DB에 즉시 저장되어 PC와 모바일 간 실시간으로 동기화됩니다.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ==========================================
+        // [필수] 본인의 Firebase 설정값
+        // ==========================================
+        const firebaseConfig = {
+  		apiKey: "AIzaSyDUPP_Q20x25GEUbkCtemoX2yOlftTYInY",
+  		authDomain: "millions-90142.firebaseapp.com",
+  		projectId: "millions-90142",
+  		storageBucket: "millions-90142.firebasestorage.app",
+  		messagingSenderId: "708360586022",
+  		appId: "1:708360586022:web:c2f9af2971097b0fc9b7e7",
+  		measurementId: "G-T82FQ8FYR3"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docRef = doc(db, "simulator", "qld_data");
+
+        const monthsData = [];
+        const startYear = 2026;
+        const startMonth = 10;
+        const totalMonths = 40;
+
+        let globalAllMemosOpen = false;
+        let isRemoteUpdate = false;
+        let isInitialized = false;
+
+        const initLoadDate = new Date();
+        const targetYear = initLoadDate.getFullYear();
+        const targetMonth = initLoadDate.getMonth() + 1;
+
+        function getDefaultData() {
+            const arr = [];
+            let currentYear = startYear;
+            let currentMonth = startMonth;
+
+            for (let i = 0; i < totalMonths; i++) {
+                arr.push({
+                    index: i,
+                    year: currentYear,
+                    month: currentMonth,
+                    customStartAsset: (i === 0) ? 8000000 : null, 
+                    customTax: null, 
+                    deposit: 500000,
+                    returnRate: 2.0,
+                    memo: '',
+                    memoOpen: false
+                });
+
+                currentMonth++;
+                if (currentMonth > 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                }
+            }
+            return arr;
+        }
+
+        async function saveData() {
+            if (isRemoteUpdate || !isInitialized) return;
+            try {
+                await setDoc(docRef, { data: monthsData });
+                document.getElementById('sync-status').innerHTML = '✅ 클라우드 동기화 완료';
+                document.getElementById('sync-status').className = 'text-xs text-emerald-400 font-medium flex items-center gap-1';
+            } catch (e) {
+                console.error("Save error: ", e);
+                document.getElementById('sync-status').innerHTML = '❌ 동기화 오류 발생 (보안 규칙 확인 필요)';
+                document.getElementById('sync-status').className = 'text-xs text-rose-400 font-medium flex items-center gap-1';
+            }
+        }
+
+        let assetChartInstance = null;
+
+        function formatCurrency(num) {
+            return Math.round(num).toLocaleString() + '원';
+        }
+
+        function numberWithCommas(x) {
+            if (x === null || x === undefined || x === '') return '';
+            return Number(x).toLocaleString();
+        }
+
+        function parseNumber(str) {
+            if (!str) return 0;
+            return Number(String(str).replace(/,/g, '')) || 0;
+        }
+
+        window.formatInputWithComma = function(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val === '') {
+                input.value = '';
+                return;
+            }
+            input.value = Number(val).toLocaleString();
+        }
+
+        window.toggleMemo = function(index) {
+            monthsData[index].memoOpen = !monthsData[index].memoOpen;
+            calculateSimulation();
+        }
+
+        window.toggleAllMemos = function() {
+            globalAllMemosOpen = !globalAllMemosOpen;
+            monthsData.forEach(m => {
+                m.memoOpen = globalAllMemosOpen;
+            });
+            calculateSimulation();
+        }
+
+        window.updateMemo = function(index, value) {
+            monthsData[index].memo = value;
+            saveData();
+        }
+
+        function calculateSimulation() {
+            let totalTaxPaid = 0;
+
+            let tempRunningAsset = 8000000;
+            let preYearGains = {};
+            for (let i = 0; i < monthsData.length; i++) {
+                let m = monthsData[i];
+                let autoStart = (i === 0) ? 8000000 : tempRunningAsset;
+                let startAsset = (m.customStartAsset !== null && m.customStartAsset !== undefined && m.customStartAsset !== '') 
+                    ? parseNumber(m.customStartAsset) 
+                    : autoStart;
+
+                let deposit = parseNumber(m.deposit);
+                let baseForReturn = startAsset + deposit;
+                let returnRate = Number(m.returnRate) || 0;
+                let monthlyGain = baseForReturn * (returnRate / 100);
+                let intermediateAsset = baseForReturn + monthlyGain;
+
+                let currentYearKey = m.year;
+                if (!preYearGains[currentYearKey]) preYearGains[currentYearKey] = 0;
+                preYearGains[currentYearKey] += monthlyGain;
+
+                let autoTax = 0;
+                if (m.month === 5 && i > 0) {
+                    let prevYearKey = m.year - 1;
+                    let prevYearGain = preYearGains[prevYearKey] || 0;
+                    if (prevYearGain > 2500000) {
+                        autoTax = (prevYearGain - 2500000) * 0.22;
+                    }
+                }
+
+                let taxThisMonth = (m.customTax !== null && m.customTax !== undefined && m.customTax !== '')
+                    ? parseNumber(m.customTax)
+                    : autoTax;
+
+                tempRunningAsset = intermediateAsset - taxThisMonth;
+                if (tempRunningAsset < 0) tempRunningAsset = 0;
+            }
+
+            const chartLabels = [];
+            const chartAssets = [];
+            const chartPrincipals = [];
+            const chartGoal = [];
+
+            let simulatedRows = [];
+            let currentAutoAsset = 0;
+            let initialSeedDisplay = 8000000;
+
+            for (let i = 0; i < monthsData.length; i++) {
+                let m = monthsData[i];
+                
+                let autoStart = (i === 0) ? 8000000 : currentAutoAsset;
+                let startAsset = (m.customStartAsset !== null && m.customStartAsset !== undefined && m.customStartAsset !== '') 
+                    ? parseNumber(m.customStartAsset) 
+                    : autoStart;
+
+                if (i === 0) {
+                    initialSeedDisplay = startAsset;
+                }
+
+                let deposit = parseNumber(m.deposit);
+                let baseForReturn = startAsset + deposit;
+                
+                let returnRate = Number(m.returnRate) || 0;
+                let monthlyGain = baseForReturn * (returnRate / 100);
+                let intermediateAsset = baseForReturn + monthlyGain;
+
+                let autoTax = 0;
+                if (m.month === 5 && i > 0) {
+                    let prevYearKey = m.year - 1;
+                    let prevYearGain = preYearGains[prevYearKey] || 0;
+                    if (prevYearGain > 2500000) {
+                        autoTax = (prevYearGain - 2500000) * 0.22;
+                    }
+                }
+
+                let taxThisMonth = (m.customTax !== null && m.customTax !== undefined && m.customTax !== '')
+                    ? parseNumber(m.customTax)
+                    : autoTax;
+
+                totalTaxPaid += taxThisMonth;
+
+                currentAutoAsset = intermediateAsset - taxThisMonth;
+                if (currentAutoAsset < 0) currentAutoAsset = 0;
+
+                simulatedRows.push({
+                    startAsset: startAsset,
+                    deposit: deposit,
+                    monthlyGain: monthlyGain,
+                    taxThisMonth: taxThisMonth,
+                    endAsset: currentAutoAsset
+                });
+            }
+
+            let finalTotalPrincipal = initialSeedDisplay;
+            let cumulativePrincipals = [];
+            
+            for (let i = 0; i < simulatedRows.length; i++) {
+                if (i === 0) {
+                    cumulativePrincipals.push(initialSeedDisplay + simulatedRows[0].deposit);
+                } else {
+                    finalTotalPrincipal += simulatedRows[i].deposit;
+                    cumulativePrincipals.push(finalTotalPrincipal);
+                }
+                chartGoal.push(100000000);
+            }
+
+            let tableHTML = '';
+            for (let i = 0; i < monthsData.length; i++) {
+                let m = monthsData[i];
+                let row = simulatedRows[i];
+
+                let labelStr = `${m.year}.${String(m.month).padStart(2, '0')}`;
+                chartLabels.push(labelStr);
+                chartAssets.push(Math.round(row.endAsset));
+                chartPrincipals.push(Math.round(cumulativePrincipals[i]));
+
+                let isFinal = (i === monthsData.length - 1);
+                let rowBg = isFinal ? 'bg-indigo-950/40 font-semibold' : (i % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-800/80');
+
+                let displayStartVal = (m.customStartAsset !== null && m.customStartAsset !== undefined && m.customStartAsset !== '') 
+                    ? numberWithCommas(m.customStartAsset) 
+                    : numberWithCommas(Math.round(row.startAsset));
+
+                let displayDepositVal = numberWithCommas(m.deposit);
+
+                let displayTaxVal = '';
+                if (m.month === 5 && i > 0) {
+                    if (m.customTax !== null && m.customTax !== undefined && m.customTax !== '') {
+                        displayTaxVal = numberWithCommas(m.customTax);
+                    } else {
+                        displayTaxVal = numberWithCommas(Math.round(row.taxThisMonth));
+                    }
+                }
+
+                let isMay = (m.month === 5 && i > 0);
+                let hasMemo = (m.memo && m.memo.trim() !== '');
+                let memoBtnClass = hasMemo ? 'bg-amber-500/20 text-amber-300 border-amber-500/50' : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700';
+
+                tableHTML += `
+                    <tr class="${rowBg} border-b border-slate-700/50 hover:bg-slate-700/30 transition">
+                        <td class="p-3 text-xs sm:text-sm font-medium text-slate-300">
+                            <div class="flex items-center gap-2">
+                                <span>${m.year}년 ${m.month}월</span>
+                                <button onclick="toggleMemo(${i})" class="text-[11px] px-2 py-0.5 rounded border transition flex items-center gap-1 ${memoBtnClass}">
+                                    <span>📝</span>
+                                    <span>${hasMemo ? '메모' : '메모+'}</span>
+                                </button>
+                                ${isFinal ? '<span class="text-emerald-400 font-bold">(목표점)</span>' : ''}
+                            </div>
+                        </td>
+                        <td class="p-3">
+                            <input type="text" value="${displayStartVal}" oninput="formatInputWithComma(this)" onchange="updateStartAsset(${i}, this.value)" 
+                                class="w-32 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-500">
+                        </td>
+                        <td class="p-3">
+                            <input type="text" value="${displayDepositVal}" oninput="formatInputWithComma(this)" onchange="updateRow(${i}, 'deposit', this.value)" 
+                                class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        </td>
+                        <td class="p-3 w-20">
+                            <div class="flex items-center gap-1">
+                                <input type="number" step="0.1" value="${m.returnRate}" onchange="updateRow(${i}, 'returnRate', this.value)" 
+                                    class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-xs text-white text-center focus:outline-none focus:border-indigo-500">
+                                <span class="text-xs text-slate-400">%</span>
+                            </div>
+                        </td>
+                        <td class="p-3 text-xs sm:text-sm text-emerald-400">+${formatCurrency(row.monthlyGain)}</td>
+                        <td class="p-3">
+                            ${isMay ? `
+                                <input type="text" value="${displayTaxVal}" oninput="formatInputWithComma(this)" onchange="updateTax(${i}, this.value)" 
+                                    class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-rose-300 font-semibold focus:outline-none focus:border-rose-500" placeholder="0">
+                            ` : `<span class="text-xs text-slate-500">-</span>`}
+                        </td>
+                        <td class="p-3 text-xs sm:text-sm text-right font-bold text-white">${formatCurrency(row.endAsset)}</td>
+                    </tr>
+                `;
+
+                if (m.memoOpen) {
+                    tableHTML += `
+                        <tr class="bg-slate-900/60 border-b border-slate-700/50">
+                            <td colspan="7" class="p-3">
+                                <div class="flex flex-col gap-1.5 pl-2 border-l-2 border-amber-500/60">
+                                    <div class="text-xs font-semibold text-amber-400">📌 ${m.year}년 ${m.month}월 메모</div>
+                                    <textarea rows="2" oninput="updateMemo(${i}, this.value)" placeholder="이 달의 시장 상황이나 특이사항을 기록하세요..." class="w-full bg-slate-950/80 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-y">${m.memo || ''}</textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            document.getElementById('table-body').innerHTML = tableHTML;
+
+            // 현재 컴퓨터 날짜 기준 월을 찾아 매칭 (시작일 이전이면 첫 달, 종료일 이후면 마지막 달)
+            let matchedIndex = monthsData.findIndex(m => m.year === targetYear && m.month === targetMonth);
+            if (matchedIndex === -1) {
+                if (targetYear < startYear || (targetYear === startYear && targetMonth < startMonth)) {
+                    matchedIndex = 0;
+                } else {
+                    matchedIndex = monthsData.length - 1;
+                }
+            }
+
+            let currentMonthTargetData = monthsData[matchedIndex];
+            let currentMonthSimRow = simulatedRows[matchedIndex];
+            let baseCalculationAsset = currentMonthSimRow.startAsset + currentMonthSimRow.deposit;
+
+            document.getElementById('card-achievement-title').innerText = `${currentMonthTargetData.year}.${String(currentMonthTargetData.month).padStart(2, '0')} 기준 1억 달성률`;
+            document.getElementById('card-current-asset-sub').innerText = `(시작+납입: ${formatCurrency(baseCalculationAsset)})`;
+
+            let achievementRate = Math.min(100, (baseCalculationAsset / 100000000) * 100).toFixed(1);
+            document.getElementById('card-achievement-rate').innerText = achievementRate + '%';
+            document.getElementById('achievement-bar').style.width = achievementRate + '%';
+
+            let finalAsset = simulatedRows[simulatedRows.length - 1].endAsset;
+            document.getElementById('header-final-asset').innerText = formatCurrency(finalAsset);
+            document.getElementById('card-seed').innerText = formatCurrency(initialSeedDisplay);
+            document.getElementById('card-total-principal').innerText = formatCurrency(finalTotalPrincipal);
+            document.getElementById('card-total-tax').innerText = formatCurrency(totalTaxPaid);
+
+            updateChart(chartLabels, chartAssets, chartPrincipals, chartGoal);
+        }
+
+        window.updateStartAsset = function(index, value) {
+            if (value === '') {
+                monthsData[index].customStartAsset = null;
+                calculateSimulation();
+                saveData();
+                return;
+            }
+
+            let newStart = parseNumber(value);
+            monthsData[index].customStartAsset = newStart;
+
+            if (index > 0) {
+                let prevIndex = index - 1;
+                let prevMonth = monthsData[prevIndex];
+
+                let tempRunning = 8000000;
+                let tempYearGains = {};
+                for (let j = 0; j < prevIndex; j++) {
+                    let m = monthsData[j];
+                    let autoStart = (j === 0) ? 8000000 : tempRunning;
+                    let sAsset = (m.customStartAsset !== null) ? parseNumber(m.customStartAsset) : autoStart;
+                    let dep = parseNumber(m.deposit);
+                    let base = sAsset + dep;
+                    let gain = base * (Number(m.returnRate) / 100);
+                    let inter = base + gain;
+                    
+                    let yKey = m.year;
+                    if (!tempYearGains[yKey]) tempYearGains[yKey] = 0;
+                    tempYearGains[yKey] += gain;
+
+                    let autoTax = 0;
+                    if (m.month === 5 && j > 0) {
+                        let pGain = tempYearGains[m.year - 1] || 0;
+                        if (pGain > 2500000) autoTax = (pGain - 2500000) * 0.22;
+                    }
+                    let tax = (m.customTax !== null) ? parseNumber(m.customTax) : autoTax;
+                    tempRunning = inter - tax;
+                    if (tempRunning < 0) tempRunning = 0;
+                }
+
+                let prevStartAsset = (prevMonth.customStartAsset !== null) 
+                    ? parseNumber(prevMonth.customStartAsset) 
+                    : (prevIndex === 0 ? 8000000 : tempRunning);
+
+                let autoTaxPrev = 0;
+                if (prevMonth.month === 5 && prevIndex > 0) {
+                    let pGain = tempYearGains[prevMonth.year - 1] || 0;
+                    if (pGain > 2500000) autoTaxPrev = (pGain - 2500000) * 0.22;
+                }
+                let taxPrev = (prevMonth.customTax !== null) ? parseNumber(prevMonth.customTax) : autoTaxPrev;
+
+                let retFactor = 1 + (Number(prevMonth.returnRate) / 100);
+                let requiredBase = (newStart + taxPrev) / retFactor;
+
+                let requiredDeposit = requiredBase - prevStartAsset;
+                if (requiredDeposit < 0) requiredDeposit = 0;
+                prevMonth.deposit = Math.round(requiredDeposit);
+            }
+
+            calculateSimulation();
+            saveData();
+        }
+
+        window.updateTax = function(index, value) {
+            monthsData[index].customTax = (value === '') ? null : parseNumber(value);
+            calculateSimulation();
+            saveData();
+        }
+
+        window.updateRow = function(index, field, value) {
+            monthsData[index][field] = parseNumber(value);
+            calculateSimulation();
+            saveData();
+        }
+
+        window.applyBulkDeposit = function() {
+            let val = document.getElementById('bulk-deposit').value;
+            if (val === '') return;
+            let num = parseNumber(val);
+            monthsData.forEach((m, idx) => {
+                if (idx > 0) m.deposit = num;
+            });
+            calculateSimulation();
+            saveData();
+        }
+
+        window.applyBulkReturn = function() {
+            let val = document.getElementById('bulk-return').value;
+            if (val === '') return;
+            let num = Number(val);
+            monthsData.forEach(m => {
+                m.returnRate = num;
+            });
+            calculateSimulation();
+            saveData();
+        }
+
+        function updateChart(labels, assets, principals, goal) {
+            const ctx = document.getElementById('assetChart').getContext('2d');
+            if (assetChartInstance) {
+                assetChartInstance.destroy();
+            }
+
+            assetChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '최종 자산 (세후)',
+                            data: assets,
+                            borderColor: '#34d399',
+                            backgroundColor: 'rgba(52, 211, 153, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: '총 납입 원금 (누적)',
+                            data: principals,
+                            borderColor: '#818cf8',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: '목표 1억 원',
+                            data: goal,
+                            borderColor: '#f87171',
+                            borderWidth: 2,
+                            borderDash: [3, 3],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cbd5e1', font: { size: 12 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', maxTicksLimit: 10 },
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' }
+                        },
+                        y: {
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    if (value >= 100000000) return (value / 100000000).toFixed(1) + '억원';
+                                    if (value >= 10000) return (value / 10000).toFixed(0) + '만원';
+                                    return value;
+                                }
+                            },
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 실시간 동기화 리스너
+        onSnapshot(docRef, async (docSnap) => {
+            isRemoteUpdate = true;
+            if (docSnap.exists() && docSnap.data().data) {
+                const cloudData = docSnap.data().data;
+                if (cloudData.length === totalMonths) {
+                    monthsData.length = 0;
+                    monthsData.push(...cloudData);
+                }
+            } else {
+                const defaultArr = getDefaultData();
+                monthsData.length = 0;
+                monthsData.push(...defaultArr);
+                await setDoc(docRef, { data: defaultArr });
+            }
+            isInitialized = true;
+            calculateSimulation();
+            document.getElementById('sync-status').innerHTML = '✅ 실시간 동기화 중';
+            document.getElementById('sync-status').className = 'text-xs text-emerald-400 font-medium flex items-center gap-1';
+            isRemoteUpdate = false;
+        });
+    </script>
+</body>
+</html>
