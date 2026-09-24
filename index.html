@@ -141,6 +141,7 @@
         let globalAllMemosOpen = false;
         let isRemoteUpdate = false;
         let isInitialized = false;
+        let memoSaveTimer = null;
 
         const initLoadDate = new Date();
         const targetYear = initLoadDate.getFullYear();
@@ -226,7 +227,12 @@
 
         window.updateMemo = function(index, value) {
             monthsData[index].memo = value;
-            saveData();
+            clearTimeout(memoSaveTimer);
+            document.getElementById('sync-status').innerHTML = '⏳ 메모 저장 중...';
+            memoSaveTimer = setTimeout(() => {
+                memoSaveTimer = null;
+                saveData();
+            }, 500);
         }
 
         function calculateSimulation() {
@@ -623,6 +629,13 @@
             if (docSnap.exists() && docSnap.data().data) {
                 const cloudData = docSnap.data().data;
                 if (cloudData.length === totalMonths) {
+                    const isSameAsLocal = JSON.stringify(cloudData) === JSON.stringify(monthsData);
+                    if (isInitialized && isSameAsLocal) {
+                        document.getElementById('sync-status').innerHTML = '✅ 실시간 동기화 중';
+                        document.getElementById('sync-status').className = 'text-xs text-emerald-400 font-medium flex items-center gap-1';
+                        isRemoteUpdate = false;
+                        return;
+                    }
                     monthsData.length = 0;
                     monthsData.push(...cloudData);
                 }
