@@ -131,7 +131,7 @@
                         <span class="text-xs text-slate-400">배당 전액 재투자</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold mt-3 text-white">🌱 30년 배당 투자 시뮬레이터</h1>
-                    <p class="text-slate-400 text-sm mt-2">꾸준한 적립과 복리의 힘을 7% · 9% · 11% 시나리오로 비교합니다.</p>
+                    <p class="text-slate-400 text-sm mt-2">장기 예상치를 확인하고, 매월 실제 납입액과 자산을 직접 기록합니다.</p>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:min-w-[540px]">
                     <label class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-3">
@@ -153,51 +153,47 @@
                 </div>
             </header>
 
-            <section class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-5 shadow-xl">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <section class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div>
-                        <div class="text-xs text-slate-500">상세 카드 기준 수익률</div>
-                        <div id="div-scenario-copy" class="font-bold text-white mt-0.5">연 9% 기준 시나리오</div>
+                        <h2 class="text-lg font-bold text-white">📝 월별 실제 투자 기록</h2>
+                        <p class="text-xs text-slate-500 mt-1">2026년 10월부터 실제 납입액과 월말 자산을 입력하세요. 연 9% 예상 경로와 자동 비교됩니다.</p>
                     </div>
-                    <div class="flex bg-slate-900 rounded-xl p-1 border border-slate-700" role="group" aria-label="수익률 시나리오">
-                        <button onclick="selectDividendScenario(7)" data-rate="7" class="scenario-button rounded-lg px-5 py-2 text-sm font-semibold text-slate-400 transition">7%</button>
-                        <button onclick="selectDividendScenario(9)" data-rate="9" class="scenario-button rounded-lg px-5 py-2 text-sm font-semibold bg-emerald-600 text-white shadow transition">9%</button>
-                        <button onclick="selectDividendScenario(11)" data-rate="11" class="scenario-button rounded-lg px-5 py-2 text-sm font-semibold text-slate-400 transition">11%</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="div-summary-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"></section>
-
-            <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl">
-                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
-                        <div>
-                            <h2 class="text-lg font-bold text-white">📈 포트폴리오 성장 비교</h2>
-                            <p class="text-xs text-slate-500 mt-1">월 복리 · 매월 말 투자 · 배당 재투자 가정</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                        <div class="bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2">
+                            <div class="text-slate-500">실제 누적 납입</div>
+                            <div id="div-actual-contributed" class="font-bold text-indigo-300 mt-0.5">0원</div>
                         </div>
-                        <div class="text-xs text-slate-500">단위: 원</div>
+                        <div class="bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2">
+                            <div class="text-slate-500">최근 실제 자산</div>
+                            <div id="div-latest-actual" class="font-bold text-white mt-0.5">-</div>
+                        </div>
+                        <div class="bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 col-span-2 sm:col-span-1">
+                            <div class="text-slate-500">예상 연 배당</div>
+                            <div id="div-latest-income" class="font-bold text-emerald-400 mt-0.5">-</div>
+                        </div>
                     </div>
-                    <div class="h-80 sm:h-96"><canvas id="dividendChart"></canvas></div>
                 </div>
-                <aside class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
-                    <div>
-                        <div class="text-xs text-slate-500">30년 누적 납입 원금</div>
-                        <div id="div-principal" class="text-2xl font-black text-indigo-300 mt-1">-</div>
-                    </div>
-                    <div class="h-px bg-slate-700"></div>
-                    <div>
-                        <div class="text-xs text-slate-500">30년 예상 연 배당</div>
-                        <div id="div-annual" class="text-2xl font-black text-emerald-400 mt-1">-</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500">월평균 예상 배당</div>
-                        <div id="div-monthly-income" class="text-xl font-bold text-white mt-1">-</div>
-                    </div>
-                    <div class="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 text-xs leading-relaxed text-amber-200/80">
-                        배당률 2.79%는 SCHD 60% + DGRO 40%의 단순 혼합 가정입니다. 실제 배당률과 지급액은 시장 가격, 배당 정책, 환율 및 세금에 따라 달라질 수 있습니다.
-                    </div>
-                </aside>
+                <div class="overflow-x-auto max-h-[600px] rounded-xl border border-slate-700">
+                    <table class="w-full min-w-[920px] text-left border-collapse text-sm">
+                        <thead class="bg-slate-900 sticky top-0 z-10 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">시기</th>
+                                <th class="p-3">연 9% 예상 자산</th>
+                                <th class="p-3">실제 납입액</th>
+                                <th class="p-3">실제 월말 자산</th>
+                                <th class="p-3">예상 대비</th>
+                                <th class="p-3">예상 연 배당</th>
+                                <th class="p-3">메모</th>
+                            </tr>
+                        </thead>
+                        <tbody id="div-actual-table-body" class="divide-y divide-slate-700/50 text-slate-200"></tbody>
+                    </table>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500">
+                    <span>* 실제 값이 입력된 달만 합계와 최근 자산에 반영됩니다.</span>
+                    <span>입력 내용은 이 브라우저에 자동 저장됩니다.</span>
+                </div>
             </section>
 
             <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl">
@@ -214,8 +210,8 @@
     </div>
 
     <script>
-        let selectedDividendRate = 9;
-        let dividendChartInstance = null;
+        const dividendActualStorageKey = 'millionsDividendActualRecordsV1';
+        let dividendActualRecords = loadDividendActualRecords();
 
         window.switchSimulator = function(tab) {
             const isDividend = tab === 'dividend';
@@ -256,48 +252,102 @@
             return `${Math.round(value).toLocaleString('ko-KR')}원`;
         }
 
-        window.selectDividendScenario = function(rate) {
-            selectedDividendRate = rate;
-            document.querySelectorAll('.scenario-button').forEach(button => {
-                const active = Number(button.dataset.rate) === rate;
-                button.className = `scenario-button rounded-lg px-5 py-2 text-sm font-semibold transition ${active ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`;
-            });
-            updateDividendSimulation();
+        function loadDividendActualRecords() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(dividendActualStorageKey));
+                return Array.isArray(saved) ? saved : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveDividendActualRecords() {
+            localStorage.setItem(dividendActualStorageKey, JSON.stringify(dividendActualRecords));
+        }
+
+        function dividendRecord(index) {
+            if (!dividendActualRecords[index]) {
+                dividendActualRecords[index] = { contribution: '', asset: '', memo: '' };
+            }
+            return dividendActualRecords[index];
+        }
+
+        window.updateDividendActual = function(index, field, value) {
+            const record = dividendRecord(index);
+            record[field] = field === 'memo' ? value : value.replace(/[^0-9]/g, '');
+            saveDividendActualRecords();
+            updateDividendActualSummary();
+            updateDividendActualComputedCells(index);
         };
 
+        function updateDividendActualSummary() {
+            const seed = dividendInputValue('div-seed');
+            const yieldRate = Number(document.getElementById('div-yield').value) || 0;
+            let contributed = seed;
+            let latestAsset = null;
+            dividendActualRecords.forEach(record => {
+                if (record && record.contribution !== '') contributed += Number(record.contribution) || 0;
+                if (record && record.asset !== '') latestAsset = Number(record.asset) || 0;
+            });
+            document.getElementById('div-actual-contributed').textContent = compactWon(contributed);
+            document.getElementById('div-latest-actual').textContent = latestAsset === null ? '-' : compactWon(latestAsset);
+            document.getElementById('div-latest-income').textContent = latestAsset === null ? '-' : compactWon(latestAsset * yieldRate / 100);
+        }
+
+        function updateDividendActualComputedCells(index) {
+            const record = dividendRecord(index);
+            const actual = record.asset === '' ? null : Number(record.asset) || 0;
+            const plannedCell = document.querySelector(`[data-planned-index="${index}"]`);
+            const differenceCell = document.querySelector(`[data-difference-index="${index}"]`);
+            const incomeCell = document.querySelector(`[data-income-index="${index}"]`);
+            if (!plannedCell || !differenceCell || !incomeCell) return;
+            const planned = Number(plannedCell.dataset.value);
+            const yieldRate = Number(document.getElementById('div-yield').value) || 0;
+            if (actual === null) {
+                differenceCell.textContent = '-';
+                differenceCell.className = 'p-3 text-xs text-slate-500';
+                incomeCell.textContent = '-';
+            } else {
+                const difference = actual - planned;
+                differenceCell.textContent = `${difference >= 0 ? '+' : ''}${compactWon(difference)}`;
+                differenceCell.className = `p-3 text-xs font-bold ${difference >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                incomeCell.textContent = compactWon(actual * yieldRate / 100);
+            }
+        }
+
         window.updateDividendSimulation = function() {
-            const canvas = document.getElementById('dividendChart');
-            if (!canvas) return;
             const seed = dividendInputValue('div-seed');
             const monthly = dividendInputValue('div-monthly');
             const yieldRate = Number(document.getElementById('div-yield').value) || 0;
             const rates = [7, 9, 11];
             const series = Object.fromEntries(rates.map(rate => [rate, buildDividendSeries(seed, monthly, rate)]));
-            const selected = series[selectedDividendRate];
             const milestones = [10, 20, 30];
 
-            document.getElementById('div-scenario-copy').textContent = `연 ${selectedDividendRate}% 기준 시나리오`;
-            document.getElementById('div-summary-cards').innerHTML = milestones.map(year => {
-                const asset = selected[year];
-                const principal = seed + monthly * year * 12;
-                const annualDividend = asset * yieldRate / 100;
-                return `<article class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-indigo-500"></div>
-                    <div class="text-sm font-semibold text-slate-400">${year}년 후 예상 자산</div>
-                    <div class="text-2xl font-black text-white mt-2">${compactWon(asset)}</div>
-                    <div class="grid grid-cols-2 gap-3 mt-5 text-xs">
-                        <div><div class="text-slate-500">누적 원금</div><div class="text-indigo-300 font-bold mt-1">${compactWon(principal)}</div></div>
-                        <div><div class="text-slate-500">월평균 배당</div><div class="text-emerald-400 font-bold mt-1">${compactWon(annualDividend / 12)}</div></div>
-                    </div>
-                    <div class="text-xs text-slate-500 mt-4">예상 연 배당 <span class="text-slate-300">${compactWon(annualDividend)}</span></div>
-                </article>`;
-            }).join('');
-
-            const principal30 = seed + monthly * 30 * 12;
-            const annual30 = selected[30] * yieldRate / 100;
-            document.getElementById('div-principal').textContent = compactWon(principal30);
-            document.getElementById('div-annual').textContent = compactWon(annual30);
-            document.getElementById('div-monthly-income').textContent = compactWon(annual30 / 12);
+            const monthlyNinePercentRate = Math.pow(1.09, 1 / 12) - 1;
+            let plannedAsset = seed;
+            let currentYear = 2026;
+            let currentMonth = 10;
+            let actualTableHTML = '';
+            for (let index = 0; index < 360; index++) {
+                plannedAsset = plannedAsset * (1 + monthlyNinePercentRate) + monthly;
+                const record = dividendRecord(index);
+                const actual = record.asset === '' ? null : Number(record.asset) || 0;
+                const difference = actual === null ? null : actual - plannedAsset;
+                const rowClass = index % 2 === 0 ? 'bg-slate-800/40' : 'bg-slate-800/80';
+                actualTableHTML += `<tr class="${rowClass} hover:bg-slate-700/30 transition">
+                    <td class="p-3 text-xs font-medium text-slate-300 whitespace-nowrap">${currentYear}년 ${currentMonth}월</td>
+                    <td class="p-3 text-xs text-slate-300 whitespace-nowrap" data-planned-index="${index}" data-value="${plannedAsset}">${compactWon(plannedAsset)}</td>
+                    <td class="p-3"><input type="text" value="${record.contribution === '' ? '' : Number(record.contribution).toLocaleString('ko-KR')}" oninput="formatDividendInput(this)" onchange="updateDividendActual(${index}, 'contribution', this.value)" class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="${monthly.toLocaleString('ko-KR')}"></td>
+                    <td class="p-3"><input type="text" value="${record.asset === '' ? '' : Number(record.asset).toLocaleString('ko-KR')}" oninput="formatDividendInput(this)" onchange="updateDividendActual(${index}, 'asset', this.value)" class="w-32 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-500" placeholder="실제 자산"></td>
+                    <td data-difference-index="${index}" class="p-3 text-xs ${difference === null ? 'text-slate-500' : difference >= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${difference === null ? '-' : `${difference >= 0 ? '+' : ''}${compactWon(difference)}`}</td>
+                    <td data-income-index="${index}" class="p-3 text-xs text-emerald-400 whitespace-nowrap">${actual === null ? '-' : compactWon(actual * yieldRate / 100)}</td>
+                    <td class="p-3"><input type="text" value="${String(record.memo || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" onchange="updateDividendActual(${index}, 'memo', this.value)" class="w-44 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="메모"></td>
+                </tr>`;
+                currentMonth++;
+                if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+            }
+            document.getElementById('div-actual-table-body').innerHTML = actualTableHTML;
+            updateDividendActualSummary();
 
             document.getElementById('div-comparison-body').innerHTML = milestones.map(year => `<tr class="hover:bg-slate-700/30">
                 <td class="p-3 font-bold text-white">${year}년</td>
@@ -305,27 +355,6 @@
                 ${rates.map(rate => `<td class="p-3 ${rate === 9 ? 'text-emerald-400 font-bold bg-emerald-500/5' : 'text-slate-300'}">${compactWon(series[rate][year])}</td>`).join('')}
             </tr>`).join('');
 
-            if (dividendChartInstance) dividendChartInstance.destroy();
-            dividendChartInstance = new Chart(canvas.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: 31}, (_, year) => `${year}년`),
-                    datasets: [
-                        { label: '연 7%', data: series[7], borderColor: '#818cf8', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 0, tension: 0.15 },
-                        { label: '연 9%', data: series[9], borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.08)', borderWidth: 3, pointRadius: 0, fill: true, tension: 0.15 },
-                        { label: '연 11%', data: series[11], borderColor: '#fbbf24', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 0, tension: 0.15 },
-                        { label: '누적 납입 원금', data: Array.from({length: 31}, (_, year) => seed + monthly * year * 12), borderColor: '#64748b', borderWidth: 2, borderDash: [5, 5], pointRadius: 0 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { labels: { color: '#cbd5e1', usePointStyle: true } }, tooltip: { callbacks: { label: context => `${context.dataset.label}: ${compactWon(context.raw)}` } } },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8', maxTicksLimit: 7 }, grid: { color: 'rgba(51, 65, 85, 0.35)' } },
-                        y: { ticks: { color: '#94a3b8', callback: value => compactWon(value) }, grid: { color: 'rgba(51, 65, 85, 0.35)' } }
-                    }
-                }
-            });
         };
     </script>
 
