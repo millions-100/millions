@@ -128,7 +128,7 @@
                 <div>
                     <div class="flex flex-wrap items-center gap-3">
                         <span class="bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">SCHD 60% · DGRO 40%</span>
-                        <span class="text-xs text-slate-400">배당 전액 재투자</span>
+                        <span class="text-xs text-slate-400">세후 배당 분기 재투자</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold mt-3 text-white">🌱 30년 배당 투자 시뮬레이터</h1>
                     <p class="text-slate-400 text-sm mt-2">장기 예상치를 확인하고, 매월 실제 납입액과 자산을 직접 기록합니다.</p>
@@ -157,7 +157,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
                         <h2 class="text-lg font-bold text-white">🗓️ 연도별 예상 자산·배당·세금</h2>
-                        <p class="text-xs text-slate-500 mt-1">연 9% 수익률과 입력한 배당률을 기준으로 계산한 예상치입니다.</p>
+                        <p class="text-xs text-slate-500 mt-1">연 9% 세전 총수익률에서 배당을 분리해, 세금 차감 후 분기마다 재투자한 예상치입니다.</p>
                     </div>
                     <span class="text-xs text-slate-500">배당 세금은 미국 원천징수 15% 가정</span>
                 </div>
@@ -220,6 +220,7 @@
 
             <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl">
                 <h2 class="text-lg font-bold text-white">📊 10년 단위 시나리오 비교</h2>
+                <p class="text-xs text-slate-500 mt-1">7%·9%·11%는 세전 총수익률 가정이며, 표시 자산에는 분기별 배당세 15% 차감과 세후 배당 재투자가 반영됩니다.</p>
                 <div class="overflow-x-auto mt-4 rounded-xl border border-slate-700">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-900 text-xs text-slate-400 uppercase"><tr><th class="p-3">기간</th><th class="p-3">납입 원금</th><th class="p-3">연 7%</th><th class="p-3">연 9%</th><th class="p-3">연 11%</th></tr></thead>
@@ -301,12 +302,21 @@
             updateDividendSimulation();
         };
 
-        function buildDividendSeries(seed, monthlyContribution, annualRate, years = 30) {
-            const monthlyRate = Math.pow(1 + annualRate / 100, 1 / 12) - 1;
+        function buildDividendSeries(seed, monthlyContribution, annualTotalReturn, dividendYield, years = 30) {
+            const dividendTaxRate = 0.15;
+            const grossQuarterlyDividendRate = dividendYield / 100 / 4;
+            const annualTotalFactor = 1 + annualTotalReturn / 100;
+            const annualPriceFactor = annualTotalFactor / Math.pow(1 + grossQuarterlyDividendRate, 4);
+            const monthlyPriceRate = Math.pow(Math.max(annualPriceFactor, 0.000001), 1 / 12) - 1;
             let asset = seed;
             const values = [asset];
             for (let month = 1; month <= years * 12; month++) {
-                asset = asset * (1 + monthlyRate) + monthlyContribution;
+                asset = asset * (1 + monthlyPriceRate) + monthlyContribution;
+                if (month % 3 === 0) {
+                    const grossDividend = asset * grossQuarterlyDividendRate;
+                    const dividendTax = grossDividend * dividendTaxRate;
+                    asset += grossDividend - dividendTax;
+                }
                 if (month % 12 === 0) values.push(asset);
             }
             return values;
@@ -384,7 +394,7 @@
             const monthly = dividendInputValue('div-monthly');
             const yieldRate = Number(document.getElementById('div-yield').value) || 0;
             const rates = [7, 9, 11];
-            const series = Object.fromEntries(rates.map(rate => [rate, buildDividendSeries(seed, monthly, rate)]));
+            const series = Object.fromEntries(rates.map(rate => [rate, buildDividendSeries(seed, monthly, rate, yieldRate)]));
             const milestones = [10, 20, 30];
 
             let currentYear = 2026;
