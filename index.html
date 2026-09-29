@@ -564,6 +564,10 @@
             return `${Math.round(value).toLocaleString('ko-KR')}원`;
         }
 
+        function exactWon(value) {
+            return `${Math.round(value).toLocaleString('ko-KR')}원`;
+        }
+
         function loadDividendActualRecords() {
             try {
                 const saved = JSON.parse(localStorage.getItem(dividendActualStorageKey));
@@ -684,8 +688,8 @@
                 return `<tr class="hover:bg-slate-700/30 ${year % 2 === 0 ? 'bg-slate-800/40' : ''}">
                     <td class="p-3 font-bold text-white">${year}년 후</td>
                     <td class="p-3 text-indigo-200">${compactWon(asset)}</td>
-                    <td class="p-3 text-emerald-400">${compactWon(netAnnualDividend)}</td>
-                    <td class="p-3 text-emerald-300">${compactWon(netMonthlyDividend)}</td>
+                    <td class="p-3 text-emerald-400">${exactWon(netAnnualDividend)}</td>
+                    <td class="p-3 text-emerald-300">${exactWon(netMonthlyDividend)}</td>
                     <td class="p-3 text-rose-300">${compactWon(dividendTax)}</td>
                 </tr>`;
             }).join('');
