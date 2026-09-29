@@ -192,7 +192,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500">
                     <span>* 실제 값이 입력된 달만 합계와 최근 자산에 반영됩니다.</span>
-                    <span>입력 내용은 이 브라우저에 자동 저장됩니다.</span>
+                    <span id="div-save-status" class="text-emerald-400">✅ 입력 즉시 자동 저장됩니다.</span>
                 </div>
             </section>
 
@@ -212,6 +212,7 @@
     <script>
         const dividendActualStorageKey = 'millionsDividendActualRecordsV1';
         let dividendActualRecords = loadDividendActualRecords();
+        let dividendSaveStatusTimer = null;
 
         window.switchSimulator = function(tab) {
             const isDividend = tab === 'dividend';
@@ -262,7 +263,23 @@
         }
 
         function saveDividendActualRecords() {
-            localStorage.setItem(dividendActualStorageKey, JSON.stringify(dividendActualRecords));
+            const status = document.getElementById('div-save-status');
+            try {
+                localStorage.setItem(dividendActualStorageKey, JSON.stringify(dividendActualRecords));
+                if (status) {
+                    status.textContent = '✅ 방금 저장됨';
+                    status.className = 'text-emerald-400';
+                    clearTimeout(dividendSaveStatusTimer);
+                    dividendSaveStatusTimer = setTimeout(() => {
+                        status.textContent = '✅ 입력 즉시 자동 저장됩니다.';
+                    }, 1500);
+                }
+            } catch (error) {
+                if (status) {
+                    status.textContent = '⚠️ 저장하지 못했습니다. 브라우저 저장 설정을 확인해 주세요.';
+                    status.className = 'text-amber-400';
+                }
+            }
         }
 
         function dividendRecord(index) {
@@ -337,11 +354,11 @@
                 actualTableHTML += `<tr class="${rowClass} hover:bg-slate-700/30 transition">
                     <td class="p-3 text-xs font-medium text-slate-300 whitespace-nowrap">${currentYear}년 ${currentMonth}월</td>
                     <td class="p-3 text-xs text-slate-300 whitespace-nowrap" data-planned-index="${index}" data-value="${plannedAsset}">${compactWon(plannedAsset)}</td>
-                    <td class="p-3"><input type="text" value="${record.contribution === '' ? '' : Number(record.contribution).toLocaleString('ko-KR')}" oninput="formatDividendInput(this)" onchange="updateDividendActual(${index}, 'contribution', this.value)" class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="${monthly.toLocaleString('ko-KR')}"></td>
-                    <td class="p-3"><input type="text" value="${record.asset === '' ? '' : Number(record.asset).toLocaleString('ko-KR')}" oninput="formatDividendInput(this)" onchange="updateDividendActual(${index}, 'asset', this.value)" class="w-32 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-500" placeholder="실제 자산"></td>
+                    <td class="p-3"><input type="text" value="${record.contribution === '' ? '' : Number(record.contribution).toLocaleString('ko-KR')}" oninput="formatDividendInput(this); updateDividendActual(${index}, 'contribution', this.value)" class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="${monthly.toLocaleString('ko-KR')}"></td>
+                    <td class="p-3"><input type="text" value="${record.asset === '' ? '' : Number(record.asset).toLocaleString('ko-KR')}" oninput="formatDividendInput(this); updateDividendActual(${index}, 'asset', this.value)" class="w-32 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-500" placeholder="실제 자산"></td>
                     <td data-difference-index="${index}" class="p-3 text-xs ${difference === null ? 'text-slate-500' : difference >= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${difference === null ? '-' : `${difference >= 0 ? '+' : ''}${compactWon(difference)}`}</td>
                     <td data-income-index="${index}" class="p-3 text-xs text-emerald-400 whitespace-nowrap">${actual === null ? '-' : compactWon(actual * yieldRate / 100)}</td>
-                    <td class="p-3"><input type="text" value="${String(record.memo || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" onchange="updateDividendActual(${index}, 'memo', this.value)" class="w-44 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="메모"></td>
+                    <td class="p-3"><input type="text" value="${String(record.memo || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" oninput="updateDividendActual(${index}, 'memo', this.value)" class="w-44 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="메모"></td>
                 </tr>`;
                 currentMonth++;
                 if (currentMonth > 12) { currentMonth = 1; currentYear++; }
