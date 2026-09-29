@@ -162,19 +162,20 @@
                     <span class="text-xs text-slate-500">배당 세금은 미국 원천징수 15% 가정</span>
                 </div>
                 <div class="overflow-x-auto max-h-[520px] mt-4 rounded-xl border border-slate-700">
-                    <table class="w-full min-w-[620px] text-sm text-left">
+                    <table class="w-full min-w-[760px] text-sm text-left">
                         <thead class="bg-slate-900 sticky top-0 z-10 text-xs text-slate-400 uppercase">
                             <tr>
                                 <th class="p-3">기간</th>
                                 <th class="p-3">예상 자산</th>
-                                <th class="p-3">예상 연 배당금</th>
+                                <th class="p-3">예상 연 배당금 (세후)</th>
+                                <th class="p-3">예상 월 배당금 (세후 환산)</th>
                                 <th class="p-3">예상 세금</th>
                             </tr>
                         </thead>
                         <tbody id="div-yearly-body" class="divide-y divide-slate-700/50"></tbody>
                     </table>
                 </div>
-                <p class="text-xs text-slate-500 mt-3">* 실제 수익률·배당률·세금은 시장 상황과 세법에 따라 달라질 수 있습니다.</p>
+                <p class="text-xs text-slate-500 mt-3">* 월 배당금은 세후 연 배당금을 12로 나눈 단순 환산액입니다. 실제 지급 시기와 금액은 다를 수 있습니다.</p>
             </section>
 
             <section class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
@@ -425,12 +426,15 @@
             document.getElementById('div-yearly-body').innerHTML = Array.from({ length: 30 }, (_, index) => {
                 const year = index + 1;
                 const asset = series[9][year];
-                const annualDividend = asset * yieldRate / 100;
-                const dividendTax = annualDividend * 0.15;
+                const grossAnnualDividend = asset * yieldRate / 100;
+                const dividendTax = grossAnnualDividend * 0.15;
+                const netAnnualDividend = grossAnnualDividend - dividendTax;
+                const netMonthlyDividend = netAnnualDividend / 12;
                 return `<tr class="hover:bg-slate-700/30 ${year % 2 === 0 ? 'bg-slate-800/40' : ''}">
                     <td class="p-3 font-bold text-white">${year}년 후</td>
                     <td class="p-3 text-indigo-200">${compactWon(asset)}</td>
-                    <td class="p-3 text-emerald-400">${compactWon(annualDividend)}</td>
+                    <td class="p-3 text-emerald-400">${compactWon(netAnnualDividend)}</td>
+                    <td class="p-3 text-emerald-300">${compactWon(netMonthlyDividend)}</td>
                     <td class="p-3 text-rose-300">${compactWon(dividendTax)}</td>
                 </tr>`;
             }).join('');
