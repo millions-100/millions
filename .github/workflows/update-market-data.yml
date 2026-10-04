@@ -1,11 +1,10 @@
-name: Update ETF market data
+name: Update TIGER ETF market data
 
 on:
   workflow_dispatch:
   schedule:
-    # 미국 정규장과 시간외 거래 시간대를 대략 한 시간 간격으로 갱신합니다.
-    - cron: '0 13-23 * * 1-5'
-    - cron: '0 0-2 * * 2-6'
+    # 한국 거래일의 장 전후를 포함해 한 시간 간격으로 갱신합니다. (UTC 기준)
+    - cron: '0 0-8 * * 1-5'
 
 permissions:
   contents: write

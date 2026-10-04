@@ -127,8 +127,8 @@
             <header class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col lg:flex-row justify-between gap-5">
                 <div>
                     <div class="flex flex-wrap items-center gap-3">
-                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">SCHD 60% · DGRO 40%</span>
-                        <span class="text-xs text-slate-400">세후 배당 분기 재투자</span>
+                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full tracking-wider">TIGER 미국배당다우존스 · 458730</span>
+                        <span class="text-xs text-slate-400">세후 분배금 매월 재투자</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold mt-3 text-white">🌱 30년 배당 투자 시뮬레이터</h1>
                     <p class="text-slate-400 text-sm mt-2">장기 예상치를 확인하고, 매월 실제 납입액과 자산을 직접 기록합니다.</p>
@@ -143,8 +143,8 @@
                         <input id="div-monthly" type="text" value="500,000" oninput="formatDividendInput(this); updateDividendSettings()" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none">
                     </label>
                     <label class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-3">
-                        <span class="block text-[11px] text-slate-500 mb-1">배당률</span>
-                        <div class="flex items-center"><input id="div-yield" type="number" value="2.79" min="0" step="0.01" oninput="updateDividendSettings()" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none"><span class="text-xs text-slate-500">%</span></div>
+                        <span class="block text-[11px] text-slate-500 mb-1">연 분배율 가정</span>
+                        <div class="flex items-center"><input id="div-yield" type="number" value="3.10" min="0" step="0.01" oninput="updateDividendSettings()" class="w-full bg-transparent text-sm font-bold text-white focus:outline-none"><span class="text-xs text-slate-500">%</span></div>
                     </label>
                     <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-3">
                         <span class="block text-[11px] text-slate-500 mb-1">투자 기간</span>
@@ -157,9 +157,9 @@
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
                         <h2 class="text-lg font-bold text-white">🗓️ 연도별 예상 자산·배당·세금</h2>
-                        <p class="text-xs text-slate-500 mt-1">연 9% 세전 총수익률에서 배당을 분리해, 세금 차감 후 분기마다 재투자한 예상치입니다.</p>
+                        <p class="text-xs text-slate-500 mt-1">연 9% 세전 총수익률에서 분배금을 분리해, 세금 차감 후 매월 재투자한 예상치입니다.</p>
                     </div>
-                    <span class="text-xs text-slate-500">배당 세금은 미국 원천징수 15% 가정</span>
+                    <span class="text-xs text-slate-500">일반계좌 분배금 세금 15.4% 단순 가정</span>
                 </div>
                 <div class="overflow-x-auto max-h-[520px] mt-4 rounded-xl border border-slate-700">
                     <table class="w-full min-w-[760px] text-sm text-left">
@@ -167,49 +167,34 @@
                             <tr>
                                 <th class="p-3">기간</th>
                                 <th class="p-3">예상 자산</th>
-                                <th class="p-3">예상 연 배당금 (세후)</th>
-                                <th class="p-3">예상 월 배당금 (세후 환산)</th>
+                                <th class="p-3">예상 연 분배금 (세후)</th>
+                                <th class="p-3">예상 월 분배금 (세후 환산)</th>
                                 <th class="p-3">예상 세금</th>
                             </tr>
                         </thead>
                         <tbody id="div-yearly-body" class="divide-y divide-slate-700/50"></tbody>
                     </table>
                 </div>
-                <p class="text-xs text-slate-500 mt-3">* 월 배당금은 세후 연 배당금을 12로 나눈 단순 환산액입니다. 실제 지급 시기와 금액은 다를 수 있습니다.</p>
+                <p class="text-xs text-slate-500 mt-3">* 월 분배금은 세후 연 분배금을 12로 나눈 단순 환산액입니다. 실제 분배금과 세금은 운용 결과와 계좌 유형에 따라 달라질 수 있습니다.</p>
             </section>
 
             <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
                 <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                     <div>
-                        <h2 class="text-lg font-bold text-white">🛒 오늘의 6:4 매수 도우미</h2>
-                        <p class="text-xs text-slate-500 mt-1">월 투자금 안에서 평가금액 비중이 60:40에 가장 가까운 정수 주식 조합을 계산합니다.</p>
+                        <h2 class="text-lg font-bold text-white">🛒 오늘의 매수 도우미</h2>
+                        <p class="text-xs text-slate-500 mt-1">월 투자금으로 TIGER 미국배당다우존스를 몇 주 살 수 있는지 계산합니다.</p>
                     </div>
                     <button onclick="refreshDividendMarketPrices()" id="div-market-refresh" class="self-start bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-3 py-2 rounded-lg transition">가격 새로고침</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <label class="bg-slate-900/80 border border-slate-700 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 mb-1">SCHD 가격 (USD)</span>
-                        <input id="div-schd-price" type="number" value="33.21" min="0" step="0.01" oninput="updateDividendMarketInputs()" class="w-full bg-transparent text-lg font-extrabold text-emerald-300 focus:outline-none">
+                        <span class="block text-xs text-slate-500 mb-1">458730 가격 (KRW)</span>
+                        <input id="div-tiger-price" type="number" value="14055" min="0" step="5" oninput="updateDividendMarketInputs()" class="w-full bg-transparent text-lg font-extrabold text-emerald-300 focus:outline-none">
                     </label>
-                    <label class="bg-slate-900/80 border border-slate-700 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 mb-1">DGRO 가격 (USD)</span>
-                        <input id="div-dgro-price" type="number" value="76.57" min="0" step="0.01" oninput="updateDividendMarketInputs()" class="w-full bg-transparent text-lg font-extrabold text-sky-300 focus:outline-none">
-                    </label>
-                    <label class="bg-slate-900/80 border border-slate-700 rounded-xl p-3">
-                        <span class="block text-xs text-slate-500 mb-1">원·달러 환율 (KRW)</span>
-                        <input id="div-usd-krw" type="number" value="1355" min="0" step="0.01" oninput="updateDividendMarketInputs()" class="w-full bg-transparent text-lg font-extrabold text-amber-300 focus:outline-none">
-                    </label>
-                </div>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
-                        <div class="text-xs text-emerald-300">SCHD 60%</div>
-                        <div id="div-buy-schd" class="text-xl font-extrabold text-white mt-1">-</div>
-                        <div id="div-buy-schd-budget" class="text-xs text-slate-400 mt-1">-</div>
-                    </div>
-                    <div class="bg-sky-500/10 border border-sky-500/30 rounded-xl p-3">
-                        <div class="text-xs text-sky-300">DGRO 40%</div>
-                        <div id="div-buy-dgro" class="text-xl font-extrabold text-white mt-1">-</div>
-                        <div id="div-buy-dgro-budget" class="text-xs text-slate-400 mt-1">-</div>
+                        <div class="text-xs text-emerald-300">추천 매수수량</div>
+                        <div id="div-buy-tiger" class="text-xl font-extrabold text-white mt-1">-</div>
+                        <div id="div-buy-tiger-price" class="text-xs text-slate-400 mt-1">-</div>
                     </div>
                     <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-3">
                         <div class="text-xs text-slate-500">예상 매수금액</div>
@@ -222,7 +207,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500">
                     <span id="div-market-status">가격 정보를 확인하고 있습니다.</span>
-                    <span>* 지연 시세 · 수수료·환전 스프레드 제외 · 주문 전 증권사 가격 확인</span>
+                    <span>* 지연 시세 · 거래 수수료 제외 · 주문 전 증권사 가격 확인</span>
                 </div>
             </section>
 
@@ -249,14 +234,13 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto max-h-[600px] rounded-xl border border-slate-700">
-                    <table class="w-full min-w-[880px] text-left border-collapse text-sm">
+                    <table class="w-full min-w-[760px] text-left border-collapse text-sm">
                         <thead class="bg-slate-900 sticky top-0 z-10 text-xs text-slate-400 uppercase tracking-wider border-b border-slate-700">
                             <tr>
                                 <th class="p-3">시기</th>
                                 <th class="p-3">실제 납입액</th>
                                 <th class="p-3">실제 월말 자산</th>
-                                <th class="p-3">누적 목표 SCHD</th>
-                                <th class="p-3">누적 목표 DGRO</th>
+                                <th class="p-3">누적 목표 보유수량</th>
                             </tr>
                         </thead>
                         <tbody id="div-actual-table-body" class="divide-y divide-slate-700/50 text-slate-200"></tbody>
@@ -270,7 +254,7 @@
 
             <section class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl">
                 <h2 class="text-lg font-bold text-white">📊 10년 단위 시나리오 비교</h2>
-                <p class="text-xs text-slate-500 mt-1">7%·9%·11%는 세전 총수익률 가정이며, 표시 자산에는 분기별 배당세 15% 차감과 세후 배당 재투자가 반영됩니다.</p>
+                <p class="text-xs text-slate-500 mt-1">7%·9%·11%는 세전 총수익률 가정이며, 표시 자산에는 매월 분배금 세금 15.4% 차감과 세후 분배금 재투자가 반영됩니다.</p>
                 <div class="overflow-x-auto mt-4 rounded-xl border border-slate-700">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-slate-900 text-xs text-slate-400 uppercase"><tr><th class="p-3">기간</th><th class="p-3">납입 원금</th><th class="p-3">연 7%</th><th class="p-3">연 9%</th><th class="p-3">연 11%</th></tr></thead>
@@ -285,7 +269,9 @@
     <script>
         const dividendActualStorageKey = 'millionsDividendActualRecordsV1';
         const dividendSettingsStorageKey = 'millionsDividendSettingsV1';
-        const dividendMarketStorageKey = 'millionsDividendMarketV1';
+        const dividendPortfolioStorageKey = 'millionsDividendPortfolioV2';
+        const dividendPortfolioId = 'tiger-us-dividend-dow-jones-458730';
+        const dividendMarketStorageKey = 'millionsTigerMarketV1';
         let dividendActualRecords = loadDividendActualRecords();
         let dividendAllMemosOpen = false;
         let dividendSaveStatusTimer = null;
@@ -347,6 +333,7 @@
                     monthly: dividendInputValue('div-monthly'),
                     yieldRate: Number(document.getElementById('div-yield').value) || 0
                 }));
+                localStorage.setItem(dividendPortfolioStorageKey, dividendPortfolioId);
                 showDividendSavedStatus();
             } catch (error) {
                 showDividendSaveError();
@@ -370,9 +357,7 @@
         function saveDividendMarketSettings() {
             try {
                 localStorage.setItem(dividendMarketStorageKey, JSON.stringify({
-                    schd: dividendMarketInputValue('div-schd-price'),
-                    dgro: dividendMarketInputValue('div-dgro-price'),
-                    usdKrw: dividendMarketInputValue('div-usd-krw'),
+                    price: dividendMarketInputValue('div-tiger-price'),
                     asOf: dividendMarketAsOf
                 }));
             } catch (error) {
@@ -381,52 +366,14 @@
         }
 
         function calculateDividendSharePlan(krwAmount) {
-            const schdPrice = dividendMarketInputValue('div-schd-price');
-            const dgroPrice = dividendMarketInputValue('div-dgro-price');
-            const usdKrw = dividendMarketInputValue('div-usd-krw');
-            const schdUnitKrw = schdPrice * usdKrw;
-            const dgroUnitKrw = dgroPrice * usdKrw;
-            if (krwAmount <= 0 || schdUnitKrw <= 0 || dgroUnitKrw <= 0) return null;
-            const schdBudget = krwAmount * 0.6;
-            const dgroBudget = krwAmount * 0.4;
-            let best = null;
-            const maxSchdShares = Math.floor(krwAmount / schdUnitKrw);
-            for (let schdShares = 0; schdShares <= maxSchdShares; schdShares++) {
-                const schdCost = schdShares * schdUnitKrw;
-                const maxDgroShares = Math.floor((krwAmount - schdCost) / dgroUnitKrw);
-                const idealDgroShares = schdCost > 0 ? (schdCost * 0.4 / 0.6) / dgroUnitKrw : maxDgroShares;
-                const candidates = new Set([
-                    Math.floor(idealDgroShares),
-                    Math.ceil(idealDgroShares),
-                    maxDgroShares,
-                    Math.max(0, maxDgroShares - 1)
-                ]);
-                candidates.forEach(dgroShares => {
-                    if (dgroShares < 0 || dgroShares > maxDgroShares || schdShares + dgroShares === 0) return;
-                    const dgroCost = dgroShares * dgroUnitKrw;
-                    const totalCost = schdCost + dgroCost;
-                    const ratioError = Math.abs(schdCost / totalCost - 0.6);
-                    const cashRatio = (krwAmount - totalCost) / krwAmount;
-                    const score = ratioError * 2 + cashRatio;
-                    if (!best || score < best.score || (score === best.score && totalCost > best.totalCost)) {
-                        best = { schdShares, dgroShares, schdCost, dgroCost, totalCost, score };
-                    }
-                });
-            }
-            if (!best) return null;
-            const { schdShares, dgroShares, schdCost, dgroCost, totalCost } = best;
+            const unitPrice = dividendMarketInputValue('div-tiger-price');
+            if (krwAmount <= 0 || unitPrice <= 0) return null;
+            const shares = Math.floor(krwAmount / unitPrice);
+            const totalCost = shares * unitPrice;
             return {
-                schdShares,
-                dgroShares,
-                schdBudget,
-                dgroBudget,
-                schdUnitKrw,
-                dgroUnitKrw,
-                schdCost,
-                dgroCost,
+                shares,
+                unitPrice,
                 totalCost,
-                schdActualPct: totalCost > 0 ? schdCost / totalCost * 100 : 0,
-                dgroActualPct: totalCost > 0 ? dgroCost / totalCost * 100 : 0,
                 cash: Math.max(0, krwAmount - totalCost)
             };
         }
@@ -434,15 +381,13 @@
         function renderDividendBuyPlan() {
             const monthly = dividendInputValue('div-monthly');
             const plan = calculateDividendSharePlan(monthly);
-            const fields = ['div-buy-schd', 'div-buy-dgro', 'div-buy-schd-budget', 'div-buy-dgro-budget', 'div-buy-total', 'div-buy-cash'];
+            const fields = ['div-buy-tiger', 'div-buy-tiger-price', 'div-buy-total', 'div-buy-cash'];
             if (!plan) {
                 fields.forEach(id => document.getElementById(id).textContent = '-');
                 return;
             }
-            document.getElementById('div-buy-schd').textContent = `${plan.schdShares.toLocaleString('ko-KR')}주`;
-            document.getElementById('div-buy-dgro').textContent = `${plan.dgroShares.toLocaleString('ko-KR')}주`;
-            document.getElementById('div-buy-schd-budget').textContent = `1주 약 ${compactWon(plan.schdUnitKrw)} · 실제 ${plan.schdActualPct.toFixed(1)}%`;
-            document.getElementById('div-buy-dgro-budget').textContent = `1주 약 ${compactWon(plan.dgroUnitKrw)} · 실제 ${plan.dgroActualPct.toFixed(1)}%`;
+            document.getElementById('div-buy-tiger').textContent = `${plan.shares.toLocaleString('ko-KR')}주`;
+            document.getElementById('div-buy-tiger-price').textContent = `1주 ${exactWon(plan.unitPrice)}`;
             document.getElementById('div-buy-total').textContent = compactWon(plan.totalCost);
             document.getElementById('div-buy-cash').textContent = compactWon(plan.cash);
         }
@@ -455,10 +400,8 @@
                 if (record.contribution !== '') cumulative += Number(record.contribution) || 0;
                 const showTarget = record.contribution !== '' || record.asset !== '';
                 const plan = showTarget ? calculateDividendSharePlan(cumulative) : null;
-                const schdCell = document.getElementById(`div-target-schd-${index}`);
-                const dgroCell = document.getElementById(`div-target-dgro-${index}`);
-                if (schdCell) schdCell.textContent = plan ? `${plan.schdShares.toLocaleString('ko-KR')}주` : '-';
-                if (dgroCell) dgroCell.textContent = plan ? `${plan.dgroShares.toLocaleString('ko-KR')}주` : '-';
+                const targetCell = document.getElementById(`div-target-tiger-${index}`);
+                if (targetCell) targetCell.textContent = plan ? `${plan.shares.toLocaleString('ko-KR')}주` : '-';
             }
         }
 
@@ -467,7 +410,7 @@
             saveDividendMarketSettings();
             renderDividendBuyPlan();
             refreshDividendTargetCells();
-            document.getElementById('div-market-status').textContent = '직접 입력한 가격과 환율로 계산 중입니다.';
+            document.getElementById('div-market-status').textContent = '직접 입력한 가격으로 계산 중입니다.';
         };
 
         async function fetchDividendJson(url) {
@@ -484,23 +427,13 @@
 
         async function fetchDividendMarketData() {
             const body = await fetchDividendJson(`market-data.json?t=${Date.now()}`);
-            const schd = Number(body && body.schd);
-            const dgro = Number(body && body.dgro);
-            if (!(schd > 0) || !(dgro > 0)) throw new Error('ETF 가격 없음');
+            const price = Number(body && body.price);
+            if (!(price > 0)) throw new Error('ETF 가격 없음');
             return {
-                schd,
-                dgro,
-                schdAsOf: body.schdAsOf || '',
-                dgroAsOf: body.dgroAsOf || '',
+                price,
+                asOf: body.asOf || '',
                 updatedAt: body.updatedAt || ''
             };
-        }
-
-        async function fetchDividendFx() {
-            const body = await fetchDividendJson('https://open.er-api.com/v6/latest/USD');
-            const rate = body && body.rates ? Number(body.rates.KRW) : 0;
-            if (!(rate > 0)) throw new Error('환율 없음');
-            return { rate, asOf: body.time_last_update_utc || '' };
         }
 
         window.refreshDividendMarketPrices = async function() {
@@ -508,28 +441,16 @@
             const status = document.getElementById('div-market-status');
             button.disabled = true;
             button.textContent = '불러오는 중…';
-            status.textContent = '최신 확인 가격과 환율을 불러오고 있습니다.';
+            status.textContent = '최신 확인 가격을 불러오고 있습니다.';
             try {
-                const [marketResult, fxResult] = await Promise.allSettled([
-                    fetchDividendMarketData(),
-                    fetchDividendFx()
-                ]);
-                const market = marketResult.status === 'fulfilled' ? marketResult.value : null;
-                const fx = fxResult.status === 'fulfilled' ? fxResult.value : null;
-                if (!market && !fx) throw new Error('가격과 환율을 모두 불러오지 못했습니다.');
-                if (market) document.getElementById('div-schd-price').value = market.schd.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
-                if (market) document.getElementById('div-dgro-price').value = market.dgro.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
-                if (fx) document.getElementById('div-usd-krw').value = Number(fx.rate).toFixed(2);
-                const quoteTimes = market ? [...new Set([market.schdAsOf, market.dgroAsOf].filter(Boolean))] : [];
-                const quoteDate = quoteTimes.join(' / ');
-                if (market && market.updatedAt) dividendMarketAsOf = new Date(market.updatedAt).toLocaleString('ko-KR');
+                const market = await fetchDividendMarketData();
+                document.getElementById('div-tiger-price').value = Math.round(market.price);
+                if (market.updatedAt) dividendMarketAsOf = new Date(market.updatedAt).toLocaleString('ko-KR');
                 saveDividendMarketSettings();
                 renderDividendBuyPlan();
                 refreshDividendTargetCells();
-                const quoteLabel = quoteDate ? `ETF ${quoteDate}` : '저장된 ETF 가격';
-                status.textContent = market && fx
-                    ? `${quoteLabel} · 최신 확인 환율로 계산했습니다.`
-                    : `${quoteLabel} 기준이며, 불러오지 못한 값은 기존 입력값을 유지했습니다.`;
+                const quoteLabel = market.asOf ? new Date(market.asOf).toLocaleString('ko-KR') : dividendMarketAsOf;
+                status.textContent = `458730 · ${quoteLabel} 확인 가격으로 계산했습니다.`;
             } catch (error) {
                 status.textContent = '자동 갱신에 실패했습니다. 표시된 가격을 직접 수정하면 즉시 다시 계산됩니다.';
             } finally {
@@ -539,20 +460,18 @@
         };
 
         function buildDividendSeries(seed, monthlyContribution, annualTotalReturn, dividendYield, years = 30) {
-            const dividendTaxRate = 0.15;
-            const grossQuarterlyDividendRate = dividendYield / 100 / 4;
+            const dividendTaxRate = 0.154;
+            const grossMonthlyDividendRate = dividendYield / 100 / 12;
             const annualTotalFactor = 1 + annualTotalReturn / 100;
-            const annualPriceFactor = annualTotalFactor / Math.pow(1 + grossQuarterlyDividendRate, 4);
+            const annualPriceFactor = annualTotalFactor / Math.pow(1 + grossMonthlyDividendRate, 12);
             const monthlyPriceRate = Math.pow(Math.max(annualPriceFactor, 0.000001), 1 / 12) - 1;
             let asset = seed;
             const values = [asset];
             for (let month = 1; month <= years * 12; month++) {
                 asset = asset * (1 + monthlyPriceRate) + monthlyContribution;
-                if (month % 3 === 0) {
-                    const grossDividend = asset * grossQuarterlyDividendRate;
-                    const dividendTax = grossDividend * dividendTaxRate;
-                    asset += grossDividend - dividendTax;
-                }
+                const grossDividend = asset * grossMonthlyDividendRate;
+                const dividendTax = grossDividend * dividendTaxRate;
+                asset += grossDividend - dividendTax;
                 if (month % 12 === 0) values.push(asset);
             }
             return values;
@@ -658,12 +577,11 @@
                     </td>
                     <td class="p-3"><input type="text" value="${record.contribution === '' ? '' : Number(record.contribution).toLocaleString('ko-KR')}" oninput="formatDividendInput(this); updateDividendActual(${index}, 'contribution', this.value)" class="w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" placeholder="${monthly.toLocaleString('ko-KR')}"></td>
                     <td class="p-3"><input type="text" value="${record.asset === '' ? '' : Number(record.asset).toLocaleString('ko-KR')}" oninput="formatDividendInput(this); updateDividendActual(${index}, 'asset', this.value)" class="w-32 bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-500" placeholder="실제 자산"></td>
-                    <td class="p-3 text-emerald-300 font-bold whitespace-nowrap"><span id="div-target-schd-${index}">-</span></td>
-                    <td class="p-3 text-sky-300 font-bold whitespace-nowrap"><span id="div-target-dgro-${index}">-</span></td>
+                    <td class="p-3 text-emerald-300 font-bold whitespace-nowrap"><span id="div-target-tiger-${index}">-</span></td>
                 </tr>`;
                 if (record.memoOpen) {
                     actualTableHTML += `<tr class="bg-slate-900/60 border-b border-slate-700/50">
-                        <td colspan="5" class="p-3">
+                        <td colspan="4" class="p-3">
                             <div class="flex flex-col gap-1.5 pl-2 border-l-2 border-amber-500/60">
                                 <div class="text-xs font-semibold text-amber-400">📌 ${currentYear}년 ${currentMonth}월 메모</div>
                                 <textarea rows="2" oninput="updateDividendActual(${index}, 'memo', this.value)" placeholder="이 달의 시장 상황이나 특이사항을 기록하세요..." class="w-full bg-slate-950/80 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-y">${escapeDividendText(record.memo)}</textarea>
@@ -682,7 +600,7 @@
                 const year = index + 1;
                 const asset = series[9][year];
                 const grossAnnualDividend = asset * yieldRate / 100;
-                const dividendTax = grossAnnualDividend * 0.15;
+                const dividendTax = grossAnnualDividend * 0.154;
                 const netAnnualDividend = grossAnnualDividend - dividendTax;
                 const netMonthlyDividend = netAnnualDividend / 12;
                 return `<tr class="hover:bg-slate-700/30 ${year % 2 === 0 ? 'bg-slate-800/40' : ''}">
@@ -705,14 +623,30 @@
         const savedDividendSettings = loadDividendSettings();
         if (savedDividendSettings.seed !== undefined) document.getElementById('div-seed').value = Number(savedDividendSettings.seed).toLocaleString('ko-KR');
         if (savedDividendSettings.monthly !== undefined) document.getElementById('div-monthly').value = Number(savedDividendSettings.monthly).toLocaleString('ko-KR');
-        if (savedDividendSettings.yieldRate !== undefined) document.getElementById('div-yield').value = savedDividendSettings.yieldRate;
+        let savedDividendPortfolio = '';
+        try {
+            savedDividendPortfolio = localStorage.getItem(dividendPortfolioStorageKey) || '';
+        } catch (error) {}
+        if (savedDividendPortfolio === dividendPortfolioId && savedDividendSettings.yieldRate !== undefined) {
+            document.getElementById('div-yield').value = savedDividendSettings.yieldRate;
+        } else {
+            document.getElementById('div-yield').value = '3.10';
+            try {
+                localStorage.setItem(dividendPortfolioStorageKey, dividendPortfolioId);
+                localStorage.setItem(dividendSettingsStorageKey, JSON.stringify({
+                    seed: dividendInputValue('div-seed'),
+                    monthly: dividendInputValue('div-monthly'),
+                    yieldRate: 3.10
+                }));
+            } catch (error) {
+                showDividendSaveError();
+            }
+        }
         const savedDividendMarket = loadDividendMarketSettings();
-        if (savedDividendMarket.schd > 0) document.getElementById('div-schd-price').value = savedDividendMarket.schd;
-        if (savedDividendMarket.dgro > 0) document.getElementById('div-dgro-price').value = savedDividendMarket.dgro;
-        if (savedDividendMarket.usdKrw > 0) document.getElementById('div-usd-krw').value = savedDividendMarket.usdKrw;
+        if (savedDividendMarket.price > 0) document.getElementById('div-tiger-price').value = savedDividendMarket.price;
         if (savedDividendMarket.asOf) {
             dividendMarketAsOf = savedDividendMarket.asOf;
-            document.getElementById('div-market-status').textContent = `저장된 ${savedDividendMarket.asOf} ETF 종가로 계산 중입니다.`;
+            document.getElementById('div-market-status').textContent = `저장된 ${savedDividendMarket.asOf} 가격으로 계산 중입니다.`;
         }
         updateDividendSimulation();
         setTimeout(window.refreshDividendMarketPrices, 0);
