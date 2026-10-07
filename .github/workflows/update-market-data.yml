@@ -1,4 +1,4 @@
-name: Update TIGER ETF market data
+name: Update ISA income ETF market data
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Fetch latest ETF prices
+      - name: Fetch latest income ETF prices
         run: node scripts/update-market-data.mjs
       - name: Commit changed prices
         run: |
