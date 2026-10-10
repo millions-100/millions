@@ -1,1 +1,20 @@
-{}
+{
+  "441640": {
+    "amount": 96,
+    "event_key": "441640:2026-10-15:96",
+    "ex_date": "2026-10-14",
+    "last_buy_date": "2026-10-13",
+    "payment_date": null,
+    "record_date": "2026-10-15",
+    "reminder_sent_for": null
+  },
+  "441680": {
+    "amount": 108,
+    "event_key": "441680:2026-10-30:108",
+    "ex_date": "2026-10-29",
+    "last_buy_date": "2026-10-28",
+    "payment_date": null,
+    "record_date": "2026-10-30",
+    "reminder_sent_for": null
+  }
+}
