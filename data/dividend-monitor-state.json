@@ -1,24 +1,26 @@
 {
   "441640": {
-    "amount": 96,
-    "event_key": "441640:2026-10-14:96",
-    "ex_date": "2026-10-13",
-    "last_buy_date": "2026-10-12",
+    "amount": 184,
+    "event_key": "441640:unknown:184:False",
+    "ex_date": null,
+    "last_buy_date": null,
     "official": false,
     "payment_date": null,
-    "record_date": "2026-10-14",
+    "record_date": null,
     "reminder_sent_for": null,
+    "schedule_verified": false,
     "source_name": "ETF Retro 백업 / 공식 파싱 실패: RuntimeError"
   },
   "441680": {
-    "amount": 108,
-    "event_key": "441680:2026-10-29:108",
-    "ex_date": "2026-10-28",
-    "last_buy_date": "2026-10-27",
+    "amount": 448,
+    "event_key": "441680:unknown:448:False",
+    "ex_date": null,
+    "last_buy_date": null,
     "official": false,
     "payment_date": null,
-    "record_date": "2026-10-29",
+    "record_date": null,
     "reminder_sent_for": null,
+    "schedule_verified": false,
     "source_name": "ETF Retro 백업 / 공식 파싱 실패: HTTPError"
   }
 }
