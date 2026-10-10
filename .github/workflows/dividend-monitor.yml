@@ -1,0 +1,58 @@
+name: ETF Dividend Telegram Monitor
+
+on:
+  schedule:
+    # GitHub cron is UTC.
+    # KST: 09:30 / 14:30 / 18:30, Monday-Friday
+    - cron: "30 0 * * 1-5"
+    - cron: "30 5 * * 1-5"
+    - cron: "30 9 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: etf-dividend-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      TZ: Asia/Seoul
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SEND_INITIAL: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dividend.txt
+
+      - name: Check ETF distributions and send Telegram alerts
+        run: python scripts/dividend_monitor.py
+
+      - name: Persist monitor state
+        run: |
+          if git diff --quiet -- data/dividend-monitor-state.json; then
+            echo "No state change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/dividend-monitor-state.json
+          git commit -m "chore: update dividend monitor state"
+          git pull --rebase
+          git push
