@@ -12,7 +12,7 @@
     "official": false,
     "payment_date": "2026-10-19",
     "record_date": "2026-10-15",
-    "reminder_sent_for": null,
+    "reminder_sent_for": "2026-10-13",
     "schedule_source": "ETF Retro 정형 일정",
     "schedule_verified": true,
     "source_name": "ETF Retro 백업 / 공식 파싱 실패: RuntimeError"
