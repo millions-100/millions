@@ -829,6 +829,8 @@
                 let isMay = (m.month === 5 && i > 0);
                 let hasMemo = (m.memo && m.memo.trim() !== '');
                 let memoBtnClass = hasMemo ? 'bg-amber-500/20 text-amber-300 border-amber-500/50' : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700';
+                let monthlyGainClass = row.monthlyGain < 0 ? 'text-red-400' : row.monthlyGain > 0 ? 'text-emerald-400' : 'text-slate-400';
+                let monthlyGainPrefix = row.monthlyGain > 0 ? '+' : '';
 
                 tableHTML += `
                     <tr class="${rowBg} border-b border-slate-700/50 hover:bg-slate-700/30 transition">
@@ -857,7 +859,7 @@
                                 <span class="text-xs text-slate-400">%</span>
                             </div>
                         </td>
-                        <td class="p-3 text-xs sm:text-sm text-emerald-400">+${formatCurrency(row.monthlyGain)}</td>
+                        <td class="p-3 text-xs sm:text-sm ${monthlyGainClass}">${monthlyGainPrefix}${formatCurrency(row.monthlyGain)}</td>
                         <td class="p-3">
                             ${isMay ? `
                                 <input type="text" value="${displayTaxVal}" oninput="formatInputWithComma(this)" onchange="updateTax(${i}, this.value)" onblur="updateTax(${i}, this.value)"
