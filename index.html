@@ -959,19 +959,15 @@
                     ? parseNumber(prevMonth.customStartAsset) 
                     : (prevIndex === 0 ? 8000000 : tempRunning);
 
-                let autoTaxPrev = 0;
-                if (prevMonth.month === 5 && prevIndex > 0) {
-                    let pGain = tempYearGains[prevMonth.year - 1] || 0;
-                    if (pGain > 2500000) autoTaxPrev = (pGain - 2500000) * 0.22;
+                // Keep the contribution exactly as entered. The next month's
+                // actual starting asset determines the previous month's return.
+                let prevBaseAsset = prevStartAsset + parseNumber(prevMonth.deposit);
+                if (prevBaseAsset > 0) {
+                    let calculatedReturn = ((newStart / prevBaseAsset) - 1) * 100;
+                    prevMonth.returnRate = Number(calculatedReturn.toFixed(6));
+                } else {
+                    prevMonth.returnRate = 0;
                 }
-                let taxPrev = (prevMonth.customTax !== null) ? parseNumber(prevMonth.customTax) : autoTaxPrev;
-
-                let retFactor = 1 + (Number(prevMonth.returnRate) / 100);
-                let requiredBase = (newStart + taxPrev) / retFactor;
-
-                let requiredDeposit = requiredBase - prevStartAsset;
-                if (requiredDeposit < 0) requiredDeposit = 0;
-                prevMonth.deposit = Math.round(requiredDeposit);
             }
 
             calculateSimulation();
